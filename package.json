@@ -1,0 +1,27 @@
+{
+  "name": "pweb-express-p38-2025",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "start": "./dist/app.js",
+    "dev": "nodemon src/app.ts",
+    "build": "tsc --build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.8.0",
+    "dotenv": "^17.2.3",
+    "nodemon": "^3.1.10",
+    "prisma": "^6.17.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.17.1",
+    "express": "^5.1.0"
+  }
+}
