@@ -1,11 +1,16 @@
 import "dotenv/config";
 import express, { type Application } from "express";
-import prisma from "libs/prisma";
+import prisma from "./libs/prisma";
 
 const app: Application = express();
 
 const HOST = process.env.HOST || "localhost";
 const PORT = Number(process.env.PORT) || 3000;
+
+// ------------------
+// GLOBAL MIDDLEWARES
+// ------------------
+app.use(express.json());
 
 // ---------------
 // REGISTER ROUTES

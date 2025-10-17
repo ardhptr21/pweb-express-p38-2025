@@ -1,3 +1,5 @@
+import { Response } from "express";
+
 export interface HTTPResponseType {
   success: boolean;
   code: number;
@@ -9,7 +11,7 @@ export interface HTTPResponseType {
 
 export class HTTPResponse<T> {
   private success: boolean;
-  private code: number;
+  private code: number = 200;
   private message?: string;
   private data?: T;
   private error?: Record<string, unknown>;
@@ -42,7 +44,7 @@ export class HTTPResponse<T> {
     return this;
   }
 
-  public parse(): HTTPResponseType {
+  private parse(): HTTPResponseType {
     return {
       success: this.success,
       code: this.code,
@@ -51,5 +53,10 @@ export class HTTPResponse<T> {
       data: this.data,
       error: this.error,
     };
+  }
+
+  public finalize(res: Response) {
+    const payload = this.parse();
+    return res.status(payload.code).json(payload);
   }
 }
