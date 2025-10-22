@@ -1,10 +1,10 @@
+import z from "zod";
 import {
   createGenreValidator,
   genreFilterQueryValidator,
   genreParamsValidator,
   updateGenreValidator,
 } from "../validators/genre-validator";
-import z from "zod";
 
 export type GenreFilterQuery = z.infer<typeof genreFilterQueryValidator>;
 

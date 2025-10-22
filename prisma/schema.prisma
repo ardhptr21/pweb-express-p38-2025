@@ -24,6 +24,26 @@ model Genre {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
+  Book      Book[]
 
   @@map("genres")
+}
+
+model Book {
+  id              String    @id @default(uuid())
+  genreId         String    @map("genre_id")
+  title           String
+  writer          String
+  publisher       String
+  publicationYear Int       @map("publication_year")
+  description     String?
+  price           Int
+  stockQuantity   Int       @map("stock_quantity")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  deletedAt       DateTime? @map("deleted_at")
+
+  genre Genre @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@map("books")
 }
