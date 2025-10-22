@@ -8,12 +8,22 @@ datasource db {
 }
 
 model User {
-    id        String   @id @default(uuid())
-    username  String?
-    password  String
-    email     String   @unique
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+  id        String   @id @default(uuid())
+  username  String?
+  password  String
+  email     String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@map("users")
+  @@map("users")
+}
+
+model Genre {
+  id        String    @id @default(uuid())
+  name      String
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@map("genres")
 }

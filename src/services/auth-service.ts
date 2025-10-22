@@ -15,8 +15,8 @@ import {
 import bcrypt from "bcrypt";
 import { generateToken } from "../libs/jwt";
 
-export const register = async (
-  body: RegisterRequest,
+export const registerService = async (
+  body: RegisterRequest
 ): Promise<HTTPResponse<RegisterResponse>> => {
   const res = new HTTPResponse<RegisterResponse>();
   try {
@@ -40,9 +40,7 @@ export const register = async (
     return res;
   }
 };
-export const login = async (
-  body: LoginRequest,
-): Promise<HTTPResponse<LoginResponse>> => {
+export const loginService = async (body: LoginRequest): Promise<HTTPResponse<LoginResponse>> => {
   const res = new HTTPResponse<LoginResponse>();
   try {
     const user = await getUserByEmail(body.email);
@@ -56,18 +54,14 @@ export const login = async (
       sub: user.id,
     });
 
-    return res
-      .withCode(200)
-      .withMessage("Login successfully")
-      .withData({ access_token });
+    return res.withCode(200).withMessage("Login successfully").withData({ access_token });
   } catch (error) {
     res.withCode(500).withMessage("Internal server error");
     return res;
   }
 };
-export const getMe = async (
-  userId: string,
-): Promise<HTTPResponse<GetMeResponse>> => {
+
+export const getMeService = async (userId: string): Promise<HTTPResponse<GetMeResponse>> => {
   const res = new HTTPResponse<GetMeResponse>();
   try {
     const user = await getUserById(userId);

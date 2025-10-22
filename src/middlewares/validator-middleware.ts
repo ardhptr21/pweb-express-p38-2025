@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { HTTPResponse } from "../libs/http";
 import type { infer as ZodInfer, ZodType } from "zod";
+import { HTTPResponse } from "../libs/http";
 
 type ZodTypeAny = ZodType<any, any, any>;
 
@@ -11,15 +11,9 @@ type Loc = {
 };
 
 type InferLoc<T extends Loc> = {
-  body: T["body"] extends ZodTypeAny
-    ? ZodInfer<NonNullable<T["body"]>>
-    : undefined;
-  query: T["query"] extends ZodTypeAny
-    ? ZodInfer<NonNullable<T["query"]>>
-    : undefined;
-  params: T["params"] extends ZodTypeAny
-    ? ZodInfer<NonNullable<T["params"]>>
-    : undefined;
+  body: T["body"] extends ZodTypeAny ? ZodInfer<NonNullable<T["body"]>> : undefined;
+  query: T["query"] extends ZodTypeAny ? ZodInfer<NonNullable<T["query"]>> : undefined;
+  params: T["params"] extends ZodTypeAny ? ZodInfer<NonNullable<T["params"]>> : undefined;
 };
 
 const validate = (schema: ZodTypeAny, data: any) => {
@@ -39,25 +33,24 @@ export const validatorMiddleware =
   async (req: Request, res: Response, next: NextFunction) => {
     const { body, query, params } = loc;
     const errors: Record<string, any> = {};
-
-    console.log(req.body);
+    req.validated = {} as InferLoc<T>;
 
     if (body) {
       const result = validate(body, req.body);
       if (result.error) errors.body = result.error;
-      else req.body = result.data;
+      else req.validated.body = result.data;
     }
 
     if (query) {
       const result = validate(query, req.query);
       if (result.error) errors.query = result.error;
-      else req.query = result.data;
+      else req.validated.query = result.data;
     }
 
     if (params) {
       const result = validate(params, req.params);
       if (result.error) errors.params = result.error;
-      else req.params = result.data;
+      else req.validated.params = result.data;
     }
 
     if (Object.keys(errors).length > 0) {
