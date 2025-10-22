@@ -1,5 +1,6 @@
 import { GenreFilterQuery } from "domains/genre-domain";
 import { Request, Response, Router } from "express";
+import { mustAuthMiddleware } from "../middlewares/auth-middleware";
 import { validatorMiddleware } from "../middlewares/validator-middleware";
 import {
   createGenreService,
@@ -16,6 +17,8 @@ import {
 } from "../validators/genre-validator";
 
 const router = Router();
+
+router.use(mustAuthMiddleware);
 
 router.post(
   "/",
@@ -57,7 +60,7 @@ router.patch(
     body: updateGenreValidator,
   }),
   async (req: Request, res: Response) => {
-    const response = await updateGenreService(req.validated.params.genre_id, req.body);
+    const response = await updateGenreService(req.validated.params.genre_id, req.validated.body);
     return response.finalize(res);
   }
 );

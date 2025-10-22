@@ -24,7 +24,8 @@ model Genre {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
-  Book      Book[]
+
+  books Book[]
 
   @@map("genres")
 }
@@ -43,7 +44,33 @@ model Book {
   updatedAt       DateTime  @updatedAt @map("updated_at")
   deletedAt       DateTime? @map("deleted_at")
 
-  genre Genre @relation(fields: [genreId], references: [id], onDelete: Cascade)
+  genre      Genre       @relation(fields: [genreId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
 
   @@map("books")
+}
+
+model Order {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  orderItems OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String   @id @default(uuid())
+  orderId   String   @map("order_id")
+  bookId    String   @map("book_id")
+  quantity  Int
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  book  Book  @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@map("order_items")
 }

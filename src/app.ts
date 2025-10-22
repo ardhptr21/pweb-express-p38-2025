@@ -20,6 +20,13 @@ import bookRouter from "./handlers/book-handler";
 import genreRouter from "./handlers/genre-handler";
 import transactionRouter from "./handlers/transaction-handler";
 
+app.get("/", (req, res) => {
+  return res.json({
+    success: true,
+    message: "Hello World!",
+    data: new Date().toDateString(),
+  });
+});
 app.use("/auth", authRouter);
 app.use("/books", bookRouter);
 app.use("/genre", genreRouter);
@@ -28,9 +35,7 @@ app.use("/transactions", transactionRouter);
 // ---------------------------------
 // APP LISTENING AND SIGNAL HANDLING
 // ---------------------------------
-app.listen(PORT, HOST, () =>
-  console.log(`Server running at http://${HOST}:${PORT}`),
-);
+app.listen(PORT, HOST, () => console.log(`Server running at http://${HOST}:${PORT}`));
 
 process.on("SIGINT", async () => {
   await prisma.$disconnect();

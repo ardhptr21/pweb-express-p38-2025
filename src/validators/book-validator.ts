@@ -3,8 +3,8 @@ import { paginateQueryValidator } from "./common-validator";
 
 export const bookFilterQueryValidator = paginateQueryValidator.extend({
   search: z.string().optional(),
-  orderByTitle: z.enum(["asc", "desc"]).optional().default("asc"),
-  orderByPublishDate: z.enum(["asc", "desc"]).optional().default("asc"),
+  orderByTitle: z.enum(["asc", "desc"]).optional(),
+  orderByPublishDate: z.enum(["asc", "desc"]).optional(),
 });
 
 export const bookParamsValidator = z.object({

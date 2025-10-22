@@ -4,24 +4,16 @@ import { HTTPResponse } from "../libs/http";
 import { JwtPayload, verifyToken } from "../libs/jwt";
 import { getUserById } from "../repositories/user-repository";
 
-export const mustAuthMiddleware = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+export const mustAuthMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const response = new HTTPResponse<never>();
   const token = parseBearerToken(req.headers.authorization);
-  if (!token)
-    return response.withCode(401).withMessage("Unauthorized").finalize(res);
+  if (!token) return response.withCode(401).withMessage("Unauthorized").finalize(res);
 
   try {
     const payload: JwtPayload = verifyToken(token);
     const user = await getUserById(payload.sub);
     if (!user)
-      return response
-        .withCode(401)
-        .withMessage("Unauthorized: user not found")
-        .finalize(res);
+      return response.withCode(401).withMessage("Unauthorized: user not found").finalize(res);
 
     req.user = user;
 
@@ -32,6 +24,7 @@ export const mustAuthMiddleware = async (
     }
     if (err instanceof JsonWebTokenError)
       return response.withCode(401).withMessage("Invalid token").finalize(res);
+
     return next(err);
   }
 };

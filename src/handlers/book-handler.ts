@@ -1,5 +1,6 @@
 import { Request, Response, Router } from "express";
 import { BookFilterQuery } from "../domains/book-domain";
+import { mustAuthMiddleware } from "../middlewares/auth-middleware";
 import { validatorMiddleware } from "../middlewares/validator-middleware";
 import {
   createBookService,
@@ -18,6 +19,8 @@ import {
 import { genreParamsValidator } from "../validators/genre-validator";
 
 const router = Router();
+
+router.use(mustAuthMiddleware);
 
 router.post(
   "/",
@@ -47,7 +50,7 @@ router.get(
     params: bookParamsValidator,
   }),
   async (req: Request, res: Response) => {
-    const response = await getSingleBookService(req.validated.params.genre_id);
+    const response = await getSingleBookService(req.validated.params.book_id);
     return response.finalize(res);
   }
 );
@@ -75,7 +78,7 @@ router.patch(
     body: updateBookValidator,
   }),
   async (req: Request, res: Response) => {
-    const response = await updateBookService(req.validated.params.book_id, req.body);
+    const response = await updateBookService(req.validated.params.book_id, req.validated.body);
     return response.finalize(res);
   }
 );
@@ -84,7 +87,6 @@ router.delete(
   "/:book_id",
   validatorMiddleware({
     params: bookParamsValidator,
-    body: updateBookValidator,
   }),
   async (req: Request, res: Response) => {
     const response = await deleteBookService(req.validated.params.book_id);

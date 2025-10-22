@@ -3,7 +3,7 @@ import { paginateQueryValidator } from "./common-validator";
 
 export const genreFilterQueryValidator = paginateQueryValidator.extend({
   search: z.string().optional(),
-  orderByName: z.enum(["asc", "desc"]).optional().default("asc"),
+  orderByName: z.enum(["asc", "desc"]).optional(),
 });
 
 export const createGenreValidator = z.object({

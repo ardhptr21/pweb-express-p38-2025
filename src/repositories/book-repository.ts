@@ -3,13 +3,11 @@ import prisma from "../libs/prisma";
 
 export const getAllBooksPaginate = async (query: BookFilterQuery) => {
   const offset = (query.page - 1) * query.limit;
-  console.log(query.search);
 
   const where: any = {
     deletedAt: null,
-    name: query.search ? { contains: query.search, mode: "insensitive" } : undefined,
+    title: query.search ? { contains: query.search, mode: "insensitive" } : undefined,
   };
-
   const [total, data] = await Promise.all([
     prisma.book.count({
       where,
@@ -21,17 +19,21 @@ export const getAllBooksPaginate = async (query: BookFilterQuery) => {
       },
       skip: offset,
       take: query.limit,
-      orderBy: {
-        title: query.orderByTitle || "asc",
-        publicationYear: query.orderByPublishDate || "asc",
-      },
+      orderBy: [
+        {
+          title: query.orderByTitle,
+        },
+        {
+          publicationYear: query.orderByPublishDate,
+        },
+      ],
     }),
   ]);
 
   return {
     total,
     data,
-    prev: offset - query.limit > 0 ? query.page - 1 : null,
+    prev: offset - query.limit >= 0 ? query.page - 1 : null,
     next: offset + query.limit < total ? query.page + 1 : null,
   };
 };
@@ -79,7 +81,7 @@ export const getAllBooksByGenreIdPaginate = async (genreId: string, query: BookF
   const where: any = {
     deletedAt: null,
     genreId,
-    name: query.search ? { contains: query.search, mode: "insensitive" } : undefined,
+    title: query.search ? { contains: query.search, mode: "insensitive" } : undefined,
   };
 
   const [total, data] = await Promise.all([
@@ -93,17 +95,21 @@ export const getAllBooksByGenreIdPaginate = async (genreId: string, query: BookF
       },
       skip: offset,
       take: query.limit,
-      orderBy: {
-        title: query.orderByTitle || "asc",
-        publicationYear: query.orderByPublishDate || "asc",
-      },
+      orderBy: [
+        {
+          title: query.orderByTitle,
+        },
+        {
+          publicationYear: query.orderByPublishDate,
+        },
+      ],
     }),
   ]);
 
   return {
     total,
     data,
-    prev: offset - query.limit > 0 ? query.page - 1 : null,
+    prev: offset - query.limit >= 0 ? query.page - 1 : null,
     next: offset + query.limit < total ? query.page + 1 : null,
   };
 };

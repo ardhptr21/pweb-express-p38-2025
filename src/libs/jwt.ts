@@ -16,16 +16,8 @@ export const generateToken = (payload: JwtPayload) => {
 };
 
 export const verifyToken = (token: string): JwtPayload => {
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET, {
-      issuer: "pemweb-it-p38",
-    }) as JwtPayload;
-    return decoded;
-  } catch (error) {
-    if (error instanceof jwt.JsonWebTokenError)
-      throw new Error("Token malformed");
-    if (error instanceof jwt.TokenExpiredError)
-      throw new Error("Token expired");
-    throw new Error("Failed to verify token");
-  }
+  const decoded = jwt.verify(token, JWT_SECRET, {
+    issuer: "pemweb-it-p38",
+  }) as JwtPayload;
+  return decoded;
 };

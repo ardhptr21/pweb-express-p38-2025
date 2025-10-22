@@ -17,12 +17,19 @@ import {
   getBookById,
   updateBookById,
 } from "../repositories/book-repository";
+import { genreExistsById } from "../repositories/genre-repository";
 
 export const createBookService = async (
   body: CreateBookRequest
 ): Promise<HTTPResponse<CreateBookResponse>> => {
   const res = new HTTPResponse<CreateBookResponse>();
   try {
+    const exists = await genreExistsById(body.genre_id);
+    if (!exists) {
+      res.withCode(404).withMessage("Genre not found");
+      return res;
+    }
+
     const book = await createBook(body);
 
     res.withCode(201).withMessage("Book created successfully").withData({
@@ -77,6 +84,7 @@ export const getSingleBookService = async (id: string): Promise<HTTPResponse<Get
   const res = new HTTPResponse<GetBookResponse>();
   try {
     const book = await getBookById(id);
+
     if (!book) {
       res.withCode(404).withMessage("Book not found");
       return res;
@@ -107,6 +115,12 @@ export const getBooksByGenreService = async (
 ): Promise<HTTPResponse<GetBookResponseByGenre[]>> => {
   const res = new HTTPResponse<GetBookResponseByGenre[]>();
   try {
+    const exists = await genreExistsById(genreId);
+    if (!exists) {
+      res.withCode(404).withMessage("Genre not found");
+      return res;
+    }
+
     const { data, prev, next } = await getAllBooksByGenreIdPaginate(genreId, filter);
     res
       .withCode(200)

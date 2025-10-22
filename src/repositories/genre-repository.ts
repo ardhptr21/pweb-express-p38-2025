@@ -1,9 +1,8 @@
-import { GenreFilterQuery } from "domains/genre-domain";
+import { GenreFilterQuery } from "../domains/genre-domain";
 import prisma from "../libs/prisma";
 
 export const getAllGenresPaginate = async (query: GenreFilterQuery) => {
   const offset = (query.page - 1) * query.limit;
-  console.log(query.search);
 
   const where: any = {
     deletedAt: null,
@@ -19,7 +18,7 @@ export const getAllGenresPaginate = async (query: GenreFilterQuery) => {
       skip: offset,
       take: query.limit,
       orderBy: {
-        name: query.orderByName || "asc",
+        name: query.orderByName,
       },
     }),
   ]);
@@ -27,7 +26,7 @@ export const getAllGenresPaginate = async (query: GenreFilterQuery) => {
   return {
     total,
     data,
-    prev: offset - query.limit > 0 ? query.page - 1 : null,
+    prev: offset - query.limit >= 0 ? query.page - 1 : null,
     next: offset + query.limit < total ? query.page + 1 : null,
   };
 };
