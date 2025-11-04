@@ -55,6 +55,7 @@ export const validatorMiddleware =
 
     if (Object.keys(errors).length > 0) {
       return new HTTPResponse()
+        .withCode(400)
         .withError(errors)
         .withMessage("validation failed, check your input")
         .finalize(res);

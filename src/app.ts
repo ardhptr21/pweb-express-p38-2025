@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express, { type Application } from "express";
 import prisma from "./libs/prisma";
+import cors from "cors";
 
 const app: Application = express();
 
@@ -10,6 +11,7 @@ const PORT = Number(process.env.PORT) || 3000;
 // ------------------
 // GLOBAL MIDDLEWARES
 // ------------------
+app.use(cors());
 app.use(express.json());
 
 // ---------------
