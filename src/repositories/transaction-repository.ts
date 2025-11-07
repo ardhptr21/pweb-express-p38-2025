@@ -1,5 +1,5 @@
-import { CreateTransactionRequest, TransactionFilterQuery } from "../domains/transaction-domain";
-import prisma from "../libs/prisma";
+import { CreateTransactionRequest, TransactionFilterQuery } from '../domains/transaction-domain';
+import prisma from '../libs/prisma';
 
 export const createTransaction = async (payload: CreateTransactionRequest) => {
   const ids = payload.items.map((t) => t.book_id);
@@ -23,8 +23,8 @@ export const createTransaction = async (payload: CreateTransactionRequest) => {
     }
 
     if (errors.length > 0) {
-      const error = new Error(errors.join("; "));
-      error.name = "CreateTransactionError";
+      const error = new Error(errors.join('; '));
+      error.name = 'CreateTransactionError';
       throw error;
     }
 
@@ -74,7 +74,7 @@ export const getAllTransactions = async (query: TransactionFilterQuery) => {
   const offset = (query.page - 1) * query.limit;
 
   const where: any = {
-    id: query.search ? { contains: query.search, mode: "insensitive" } : undefined,
+    id: query.search ? { contains: query.search, mode: 'insensitive' } : undefined,
   };
 
   const [total, data] = await Promise.all([
@@ -110,13 +110,13 @@ export const getAllTransactions = async (query: TransactionFilterQuery) => {
 
   if (query.orderByAmount) {
     newData.sort((a, b) =>
-      query.orderByAmount === "asc"
+      query.orderByAmount === 'asc'
         ? a.total_quantity - b.total_quantity
         : b.total_quantity - a.total_quantity
     );
   } else if (query.orderByPrice) {
     newData.sort((a, b) =>
-      query.orderByPrice === "asc" ? a.total_price - b.total_price : b.total_price - a.total_price
+      query.orderByPrice === 'asc' ? a.total_price - b.total_price : b.total_price - a.total_price
     );
   }
 
@@ -137,6 +137,7 @@ export const getTransactionById = async (id: string) => {
           book: {
             select: {
               id: true,
+              image: true,
               title: true,
               price: true,
             },
@@ -158,6 +159,7 @@ export const getTransactionById = async (id: string) => {
 
     return {
       book_id: item.book.id,
+      book_image: item.book.image,
       book_title: item.book.title,
       quantity: item.quantity,
       subtotal_price: subtotalPrice,

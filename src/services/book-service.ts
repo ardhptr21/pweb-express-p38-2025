@@ -6,8 +6,8 @@ import {
   GetBookResponseByGenre,
   UpdateBookRequest,
   UpdateBookResponse,
-} from "../domains/book-domain";
-import { HTTPResponse } from "../libs/http";
+} from '../domains/book-domain';
+import { HTTPResponse } from '../libs/http';
 import {
   bookExistsById,
   createBook,
@@ -16,8 +16,8 @@ import {
   getAllBooksPaginate,
   getBookById,
   updateBookById,
-} from "../repositories/book-repository";
-import { genreExistsById } from "../repositories/genre-repository";
+} from '../repositories/book-repository';
+import { genreExistsById, getGenreById } from '../repositories/genre-repository';
 
 export const createBookService = async (
   body: CreateBookRequest
@@ -26,13 +26,13 @@ export const createBookService = async (
   try {
     const exists = await genreExistsById(body.genre_id);
     if (!exists) {
-      res.withCode(404).withMessage("Genre not found");
+      res.withCode(404).withMessage('Genre not found');
       return res;
     }
 
     const book = await createBook(body);
 
-    res.withCode(201).withMessage("Book created successfully").withData({
+    res.withCode(201).withMessage('Book created successfully').withData({
       id: book.id,
       title: book.title,
       created_at: book.createdAt,
@@ -40,7 +40,7 @@ export const createBookService = async (
 
     return res;
   } catch (error) {
-    res.withCode(500).withMessage("Internal server error");
+    res.withCode(500).withMessage('Internal server error');
     return res;
   }
 };
@@ -53,7 +53,7 @@ export const getAllBooksService = async (
     const { data, prev, next } = await getAllBooksPaginate(filter);
     res
       .withCode(200)
-      .withMessage("Get all genre successfully")
+      .withMessage('Get all genre successfully')
       .withMeta({
         page: filter.page,
         limit: filter.limit,
@@ -63,6 +63,7 @@ export const getAllBooksService = async (
       .withData(
         data.map((book) => ({
           id: book.id,
+          image: book.image,
           description: book.description,
           title: book.title,
           genre: book.genre.name,
@@ -75,7 +76,7 @@ export const getAllBooksService = async (
       );
     return res;
   } catch (error) {
-    res.withCode(500).withMessage("Internal server error");
+    res.withCode(500).withMessage('Internal server error');
     return res;
   }
 };
@@ -86,12 +87,13 @@ export const getSingleBookService = async (id: string): Promise<HTTPResponse<Get
     const book = await getBookById(id);
 
     if (!book) {
-      res.withCode(404).withMessage("Book not found");
+      res.withCode(404).withMessage('Book not found');
       return res;
     }
 
-    res.withCode(200).withMessage("Book retrieved successfully").withData({
+    res.withCode(200).withMessage('Book retrieved successfully').withData({
       id: book.id,
+      image: book.image,
       description: book.description,
       title: book.title,
       genre: book.genre.name,
@@ -104,7 +106,7 @@ export const getSingleBookService = async (id: string): Promise<HTTPResponse<Get
 
     return res;
   } catch (error) {
-    res.withCode(500).withMessage("Internal server error");
+    res.withCode(500).withMessage('Internal server error');
     return res;
   }
 };
@@ -112,40 +114,44 @@ export const getSingleBookService = async (id: string): Promise<HTTPResponse<Get
 export const getBooksByGenreService = async (
   genreId: string,
   filter: BookFilterQuery
-): Promise<HTTPResponse<GetBookResponseByGenre[]>> => {
-  const res = new HTTPResponse<GetBookResponseByGenre[]>();
+): Promise<HTTPResponse<GetBookResponseByGenre>> => {
+  const res = new HTTPResponse<GetBookResponseByGenre>();
   try {
-    const exists = await genreExistsById(genreId);
-    if (!exists) {
-      res.withCode(404).withMessage("Genre not found");
+    const genre = await getGenreById(genreId);
+    if (!genre) {
+      res.withCode(404).withMessage('Genre not found');
       return res;
     }
 
     const { data, prev, next } = await getAllBooksByGenreIdPaginate(genreId, filter);
     res
       .withCode(200)
-      .withMessage("Get all books by genre successfully")
+      .withMessage('Get all books by genre successfully')
       .withMeta({
         page: filter.page,
         limit: filter.limit,
         prev_page: prev,
         next_page: next,
       })
-      .withData(
-        data.map((book) => ({
+      .withData({
+        genre_id: genre.id,
+        genre_title: genre.name,
+        books: data.map((book) => ({
           id: book.id,
-          description: book.description,
+          image: book.image,
           title: book.title,
+          writer: book.writer,
+          description: book.description,
           publication_year: book.publicationYear,
           stock_quantity: book.stockQuantity,
           price: book.price,
           publisher: book.publisher,
-          writer: book.writer,
-        }))
-      );
+          genre: genre.name,
+        })),
+      });
     return res;
   } catch (error) {
-    res.withCode(500).withMessage("Internal server error");
+    res.withCode(500).withMessage('Internal server error');
     return res;
   }
 };
@@ -158,13 +164,13 @@ export const updateBookService = async (
   try {
     const exists = await bookExistsById(id);
     if (!exists) {
-      res.withCode(404).withMessage("Book not found");
+      res.withCode(404).withMessage('Book not found');
       return res;
     }
 
     const book = await updateBookById(id, body);
 
-    res.withCode(200).withMessage("Book updated successfully").withData({
+    res.withCode(200).withMessage('Book updated successfully').withData({
       id: book.id,
       title: book.title,
       updated_at: book.updatedAt,
@@ -172,7 +178,7 @@ export const updateBookService = async (
 
     return res;
   } catch (error) {
-    res.withCode(500).withMessage("Internal server error");
+    res.withCode(500).withMessage('Internal server error');
     return res;
   }
 };
@@ -182,17 +188,17 @@ export const deleteBookService = async (id: string): Promise<HTTPResponse<never>
   try {
     const exists = await bookExistsById(id);
     if (!exists) {
-      res.withCode(404).withMessage("Book not found");
+      res.withCode(404).withMessage('Book not found');
       return res;
     }
 
     await deleteBookById(id);
 
-    res.withCode(200).withMessage("Book deleted successfully");
+    res.withCode(200).withMessage('Book deleted successfully');
 
     return res;
   } catch (error) {
-    res.withCode(500).withMessage("Internal server error");
+    res.withCode(500).withMessage('Internal server error');
     return res;
   }
 };

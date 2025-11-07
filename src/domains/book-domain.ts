@@ -1,16 +1,17 @@
-import z from "zod";
+import z from 'zod';
 import {
   bookFilterQueryValidator,
   bookParamsValidator,
   createBookValidator,
   updateBookValidator,
-} from "../validators/book-validator";
+} from '../validators/book-validator';
 
 export type BookFilterQuery = z.infer<typeof bookFilterQueryValidator>;
 export type BookParams = z.infer<typeof bookParamsValidator>;
 
 export type GetBookResponse = {
   id: string;
+  image: string;
   title: string;
   writer: string;
   publisher: string;
@@ -21,7 +22,11 @@ export type GetBookResponse = {
   genre: string;
 };
 
-export type GetBookResponseByGenre = Omit<GetBookResponse, "genre">;
+export type GetBookResponseByGenre = {
+  genre_id: string;
+  genre_title: string;
+  books: GetBookResponse[];
+};
 
 export type CreateBookRequest = z.infer<typeof createBookValidator>;
 export type CreateBookResponse = {

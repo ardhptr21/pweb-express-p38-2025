@@ -33,6 +33,7 @@ model Genre {
 model Book {
   id              String    @id @default(uuid())
   genreId         String    @map("genre_id")
+  image           String
   title           String
   writer          String
   publisher       String

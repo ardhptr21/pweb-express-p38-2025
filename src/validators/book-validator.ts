@@ -1,10 +1,10 @@
-import z from "zod";
-import { paginateQueryValidator } from "./common-validator";
+import z from 'zod';
+import { paginateQueryValidator } from './common-validator';
 
 export const bookFilterQueryValidator = paginateQueryValidator.extend({
   search: z.string().optional(),
-  orderByTitle: z.enum(["asc", "desc"]).optional(),
-  orderByPublishDate: z.enum(["asc", "desc"]).optional(),
+  orderByTitle: z.enum(['asc', 'desc']).optional(),
+  orderByPublishDate: z.enum(['asc', 'desc']).optional(),
 });
 
 export const bookParamsValidator = z.object({
@@ -13,6 +13,7 @@ export const bookParamsValidator = z.object({
 
 export const createBookValidator = z.object({
   genre_id: z.uuid(),
+  image: z.url(),
   title: z.string().min(3).max(100),
   writer: z.string().min(3).max(100),
   publisher: z.string().min(3).max(100),

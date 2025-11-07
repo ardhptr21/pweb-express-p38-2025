@@ -5,14 +5,14 @@ import {
   GetSingleTransactionResponse,
   GetTransactionStatisticResponse,
   TransactionFilterQuery,
-} from "../domains/transaction-domain";
-import { HTTPResponse } from "../libs/http";
+} from '../domains/transaction-domain';
+import { HTTPResponse } from '../libs/http';
 import {
   createTransaction,
   getAllTransactions,
   getTransactionById,
   getTransactionStatistic,
-} from "../repositories/transaction-repository";
+} from '../repositories/transaction-repository';
 
 export const createTransactionService = async (
   body: CreateTransactionRequest
@@ -27,10 +27,10 @@ export const createTransactionService = async (
     });
     return res;
   } catch (error) {
-    if (error instanceof Error && error.name === "CreateTransactionError") {
+    if (error instanceof Error && error.name === 'CreateTransactionError') {
       res.withCode(400).withMessage(error.message);
     } else {
-      res.withCode(500).withMessage("Internal Server Error");
+      res.withCode(500).withMessage('Internal Server Error');
     }
     return res;
   }
@@ -44,7 +44,7 @@ export const getAllTransactionsService = async (
     const { data, prev, next } = await getAllTransactions(filter);
     res
       .withCode(200)
-      .withMessage("Get all transaction successfully")
+      .withMessage('Get all transaction successfully')
       .withMeta({
         page: filter.page,
         limit: filter.limit,
@@ -55,7 +55,7 @@ export const getAllTransactionsService = async (
 
     return res;
   } catch {
-    res.withCode(500).withMessage("Internal Server Error");
+    res.withCode(500).withMessage('Internal Server Error');
     return res;
   }
 };
@@ -67,15 +67,15 @@ export const getSingleTransactionService = async (
   try {
     const transaction = await getTransactionById(id);
     if (!transaction) {
-      res.withCode(404).withMessage("Transaction not found");
+      res.withCode(404).withMessage('Transaction not found');
       return res;
     }
 
-    res.withCode(200).withMessage("Get transaction successfully").withData(transaction);
+    res.withCode(200).withMessage('Get transaction successfully').withData(transaction);
 
     return res;
   } catch {
-    res.withCode(500).withMessage("Internal Server Error");
+    res.withCode(500).withMessage('Internal Server Error');
     return res;
   }
 };
@@ -86,10 +86,10 @@ export const getTransactionStatisticService = async (): Promise<
   const res = new HTTPResponse<GetTransactionStatisticResponse>();
   try {
     const stats = await getTransactionStatistic();
-    res.withCode(200).withMessage("Get transaction statistics successfully").withData(stats);
+    res.withCode(200).withMessage('Get transaction statistics successfully').withData(stats);
     return res;
   } catch {
-    res.withCode(500).withMessage("Internal Server Error");
+    res.withCode(500).withMessage('Internal Server Error');
     return res;
   }
 };
